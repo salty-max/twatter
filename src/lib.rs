@@ -11,12 +11,12 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(port: u16) -> Self {
+    pub async fn new(port: u16) -> Result<Self> {
         let address = IpAddr::from([127, 0, 0, 1]);
 
         tracing_subscriber::fmt::init();
 
-        Self { address, port }
+        Ok(Self { address, port })
     }
 
     pub async fn run(&self) -> Result<()> {

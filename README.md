@@ -5,7 +5,7 @@ A Twitter clone in Rust
 ## Features
 
 - [ ] Create a post
-  - [ ] Limit the characters per post
+  - [x] Limit the characters per post
   - [ ] Optionally can be response to another post
   - [ ] Optionally can be response to response
   - [ ] Posts are stored in postgres
@@ -35,13 +35,21 @@ A Twitter clone in Rust
     - net
     - rt-multi-thread
     - macros
+- serde v1.0.193
+  - with features
+    - derive
+- serde_json v1.0.108
+- sqlx v0.7.3
+  - with features
+    - postgres
+    - runtime-tokio-rustls
 - tracing v0.1.40
 - tracing-subscriber v0.3.18
 - tower-http v0.5.0
   - with features
     - trace
 - cli (use `cargo install`)
- - sqlx-cli v0.7.3
+  - sqlx-cli v0.7.3
 
 ## Setup
 
@@ -75,9 +83,9 @@ docker compose exec database psql -U postgres
 
 #### Posts
 
-| PK | FK | Name      | Type         |
-|----|----|-----------|--------------|
-| *  | *  | post_id   | serial       |
-|    |    | text      | varchar(255) |
-|    |    | parent_id | int          |
-|    |    | likes     | int          |
+| PK | FK | Name      | Type         | Nullable | Default |
+|----|----|-----------|--------------|----------|---------|
+| *  | *  | post_id   | serial       |          |         |
+|    |    | text      | varchar(255) |          |         |
+|    |    | parent_id | int          |    *     |         |
+|    |    | likes     | int          |          |    0    |

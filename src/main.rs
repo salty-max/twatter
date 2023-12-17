@@ -9,7 +9,7 @@ async fn main() {
         .parse::<u16>()
         .expect("PORT must be a valid number");
 
-    let app = App::new(port);
+    let app = App::new(port).await.expect("Error creating server");
 
     app.run().await.expect("Error running server");
 }
