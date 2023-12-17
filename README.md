@@ -40,10 +40,16 @@ A Twitter clone in Rust
 - tower-http v0.5.0
   - with features
     - trace
+- cli (use `cargo install`)
+ - sqlx-cli v0.7.3
 
 ## Setup
 
 1. Create the dotenv file by copying [.env.example](./.env.example) to `.env` and update it to your convenience.
+
+```shell
+cp .env.example .env
+```
 
 ## Run
 
@@ -58,3 +64,20 @@ A Docker compose file is included to run a Postgres database. Run this command t
 ```shell
 docker compose up -d
 ```
+
+### Connecting to the database locally
+
+```sh
+docker compose exec database psql -U postgres
+```
+
+### Models
+
+#### Posts
+
+| PK | FK | Name      | Type         |
+|----|----|-----------|--------------|
+| *  | *  | post_id   | serial       |
+|    |    | text      | varchar(255) |
+|    |    | parent_id | int          |
+|    |    | likes     | int          |
