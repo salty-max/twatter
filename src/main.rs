@@ -9,7 +9,11 @@ async fn main() {
         .parse::<u16>()
         .expect("PORT must be a valid number");
 
-    let app = App::new(port).await.expect("Error creating server");
+    let database_uri = std::env::var("DATABASE_URL").expect("Missing env DATABASE_URL");
+
+    let app = App::new(port, &database_uri)
+        .await
+        .expect("Error creating server");
 
     app.run().await.expect("Error running server");
 }

@@ -4,12 +4,12 @@ A Twitter clone in Rust
 
 ## Features
 
-- [ ] Create a post
+- [x] Create a post
   - [x] Limit the characters per post
-  - [ ] Optionally can be response to another post
-  - [ ] Optionally can be response to response
-  - [ ] Posts are stored in postgres
-  - [ ] Posts are validated before storage in database
+  - [x] Optionally can be response to another post
+  - [x] Optionally can be response to response
+  - [x] Posts are stored in postgres
+  - [x] Posts are validated before storage in database
 - [ ] Get a list of all top-level posts
   - [ ] Text
   - [ ] Likes
@@ -83,9 +83,9 @@ docker compose exec database psql -U postgres
 
 #### Posts
 
-| PK | FK | Name      | Type         | Nullable | Default |
-|----|----|-----------|--------------|----------|---------|
-| *  | *  | post_id   | serial       |          |         |
-|    |    | text      | varchar(255) |          |         |
-|    |    | parent_id | int          |    *     |         |
-|    |    | likes     | int          |          |    0    |
+| PK  | FK  | Name      | Type         | Nullable  | Default |
+|-----|-----|-----------|--------------|-----------|---------|
+|  *  |  *  | post_id   | serial       |           |         |
+|     |     | text      | varchar(255) |           |         |
+|     |     | parent_id | int          |     *     |         |
+|     |     | likes     | int          |           |    0    |

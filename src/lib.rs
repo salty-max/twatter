@@ -1,26 +1,36 @@
+mod database;
+mod router;
+mod state;
+
 use std::net::IpAddr;
 
+use database::connect::{connect_to_database, DB};
 use eyre::Result;
 use router::create_main_router;
 
-mod router;
+use crate::state::AppState;
 
 pub struct App {
     address: IpAddr,
     port: u16,
+    db: DB,
 }
 
 impl App {
-    pub async fn new(port: u16) -> Result<Self> {
+    pub async fn new(port: u16, database_uri: &str) -> Result<Self> {
         let address = IpAddr::from([127, 0, 0, 1]);
+        let db = connect_to_database(database_uri).await?;
 
         tracing_subscriber::fmt::init();
 
-        Ok(Self { address, port })
+        Ok(Self { address, port, db })
     }
 
     pub async fn run(&self) -> Result<()> {
-        let router = create_main_router();
+        let state = AppState {
+            db: self.db.clone(),
+        };
+        let router = create_main_router(state);
         let listener = tokio::net::TcpListener::bind((self.address, self.port)).await?;
 
         tracing::info!("Server listening on port {}", self.port);

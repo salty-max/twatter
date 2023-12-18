@@ -1,19 +1,40 @@
 use axum::{
     async_trait,
-    extract::{rejection::JsonRejection, FromRequest, Request},
+    extract::{rejection::JsonRejection, FromRequest, Request, State},
     http::StatusCode,
     response::{IntoResponse, Response},
     Json,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-pub async fn create_post(post: DtoPost) {
-    tracing::debug!("{post:?}");
+use crate::{database::queries::insert_post, state::AppState};
+
+pub async fn create_post(
+    state: State<AppState>,
+    post: DtoPost,
+) -> Result<(StatusCode, Json<DtoCreatePostResult>), (StatusCode, &'static str)> {
+    let res = insert_post(state.db.clone(), &post.text, post.parent_id)
+        .await
+        .map_err(|err| {
+            tracing::error!("Error inserting post into database: {err}");
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Post could not be created at this time, please try again later.",
+            )
+        })?;
+
+    Ok((StatusCode::CREATED, Json(DtoCreatePostResult { id: res })))
+}
+
+#[derive(Serialize)]
+pub struct DtoCreatePostResult {
+    pub id: i32,
 }
 
 #[derive(Debug)]
 pub struct DtoPost {
     pub text: String,
+    pub parent_id: Option<i32>,
 }
 
 #[async_trait]
@@ -52,11 +73,19 @@ where
                 .into_response());
         }
 
-        Ok(Self { text })
+        if post.parent_id.is_some_and(|parent_id| parent_id <= 0) {
+            return Err((StatusCode::BAD_REQUEST).into_response());
+        }
+
+        Ok(Self {
+            text,
+            parent_id: post.parent_id,
+        })
     }
 }
 
 #[derive(Deserialize, Debug)]
 pub struct DtoCreatePost {
     pub text: Option<String>,
+    parent_id: Option<i32>,
 }
