@@ -7,13 +7,13 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{database::queries::insert_post, state::AppState};
+use crate::{database::queries::save_post, state::AppState};
 
 pub async fn create_post(
     state: State<AppState>,
     post: DtoPost,
 ) -> Result<(StatusCode, Json<DtoCreatePostResult>), (StatusCode, &'static str)> {
-    let res = insert_post(state.db.clone(), &post.text, post.parent_id)
+    let res = save_post(state.db.clone(), &post.text, post.parent_id)
         .await
         .map_err(|err| {
             tracing::error!("Error inserting post into database: {err}");

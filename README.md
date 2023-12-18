@@ -10,13 +10,11 @@ A Twitter clone in Rust
   - [x] Optionally can be response to response
   - [x] Posts are stored in postgres
   - [x] Posts are validated before storage in database
-- [ ] Get a list of all top-level posts
-  - [ ] Text
-  - [ ] Likes
-  - [ ] Pagination
+- [x] Get a list of all top-level posts
+  - [x] Text
+  - [x] Likes
 - [ ] Get one post
   - [ ] Get immediate responses to the post
-    - [ ] Paginate
   - [ ] Text
   - [ ] Likes
 - [ ] Update post
