@@ -13,6 +13,7 @@ A Twitter clone in Rust
 - [x] Get a list of all top-level posts
   - [x] Text
   - [x] Likes
+  - [x] Count of immediate children
 - [ ] Get one post
   - [ ] Get immediate responses to the post
   - [ ] Text
