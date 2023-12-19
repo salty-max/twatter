@@ -18,9 +18,8 @@ A Twitter clone in Rust
   - [x] Get immediate responses to the post
   - [x] Text
   - [x] Likes
-- [ ] Update post
-  - [ ] Text
-  - [ ] Undelete
+- [x] Update post
+  - [x] Text
 - [ ] Delete post
   - [ ] Soft delete post
 

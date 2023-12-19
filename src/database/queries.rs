@@ -113,6 +113,22 @@ pub async fn fetch_post(db: DB, post_id: i32) -> Result<Option<PostWithReplies>>
     }))
 }
 
+pub async fn update_post_text(db: DB, post_id: i32, new_text: &str) -> Result<()> {
+    sqlx::query!(
+        r#"
+            UPDATE posts
+            SET text = $1
+            WHERE post_id = $2;            
+        "#,
+        new_text,
+        post_id
+    )
+    .execute(&db)
+    .await?;
+
+    Ok(())
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Post {
     id: i32,
@@ -136,19 +152,4 @@ pub struct PostWithReplies {
     text: String,
     likes: i32,
     replies: Vec<Post>,
-}
-
-impl TryFrom<DbPostWithReplies> for PostWithReplies {
-    type Error = eyre::Error;
-
-    fn try_from(value: DbPostWithReplies) -> std::result::Result<Self, Self::Error> {
-        let replies = vec![];
-
-        Ok(Self {
-            id: value.id,
-            text: value.text.clone(),
-            likes: value.likes,
-            replies,
-        })
-    }
 }
