@@ -7,7 +7,10 @@ use axum::{
 };
 use serde::{Deserialize, Serialize};
 
-use crate::{database::queries::save_post, state::AppState};
+use crate::{
+    database::queries::{is_post_deleted, save_post},
+    state::AppState,
+};
 
 pub async fn create_post(
     state: State<AppState>,
@@ -38,14 +41,13 @@ pub struct DtoPost {
 }
 
 #[async_trait]
-impl<S> FromRequest<S> for DtoPost
+impl FromRequest<AppState> for DtoPost
 where
-    Json<DtoCreatePost>: FromRequest<S, Rejection = JsonRejection>,
-    S: Send + Sync,
+    Json<DtoCreatePost>: FromRequest<AppState, Rejection = JsonRejection>,
 {
     type Rejection = Response;
 
-    async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
+    async fn from_request(req: Request, state: &AppState) -> Result<Self, Self::Rejection> {
         let Json(post) = Json::<DtoCreatePost>::from_request(req, state)
             .await
             .map_err(|err| {
@@ -73,8 +75,29 @@ where
                 .into_response());
         }
 
-        if post.parent_id.is_some_and(|parent_id| parent_id <= 0) {
-            return Err((StatusCode::BAD_REQUEST).into_response());
+        if let Some(parent_id) = post.parent_id {
+            if parent_id <= 0 {
+                return Err((StatusCode::BAD_REQUEST).into_response());
+            }
+
+            let is_deleted = is_post_deleted(state.db.clone(), parent_id)
+                .await
+                .map_err(|err| {
+                    tracing::error!("Error checking if parent is deleted: {err}");
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        "There was a problem creating the new post.",
+                    )
+                        .into_response()
+                })?;
+
+            if is_deleted {
+                return Err((
+                    StatusCode::NOT_FOUND,
+                    "Cannot reply to a non-existing post.",
+                )
+                    .into_response());
+            }
         }
 
         Ok(Self {

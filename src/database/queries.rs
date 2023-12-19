@@ -1,4 +1,4 @@
-use eyre::Result;
+use eyre::{bail, Result};
 use serde::{Deserialize, Serialize};
 
 use super::connect::DB;
@@ -7,8 +7,8 @@ pub async fn save_post(db: DB, text: &str, parent_id: Option<i32>) -> Result<i32
     let result = sqlx::query!(
         r#"
             INSERT INTO posts (text, parent_id) 
-            VALUES ($1, $2) 
-            RETURNING post_id
+            VALUES ($1, $2)
+            RETURNING post_id;
         "#,
         text,
         parent_id
@@ -30,12 +30,14 @@ pub async fn fetch_top_level_posts(db: DB) -> Result<Vec<Post>> {
                 (
                     SELECT 
                         COUNT(*) 
-                    FROM posts p2 
-                    WHERE p2.parent_id = p.post_id
+                    FROM posts r 
+                    WHERE r.parent_id = p.post_id
+                    AND r.deleted_at IS NULL
                 ) AS reply_count 
-            FROM posts p 
-            WHERE p.parent_id IS NULL 
-            GROUP BY post_id;
+            FROM posts p
+            WHERE p.parent_id IS NULL
+            AND p.deleted_at IS NULL
+            ORDER BY post_id;
         "#
     )
     .fetch_all(&db)
@@ -46,43 +48,34 @@ pub async fn fetch_post(db: DB, post_id: i32) -> Result<Option<PostWithReplies>>
     let db_post = sqlx::query_as!(
         DbPostWithReplies,
         r#"
-            WITH PostDetails AS (
-                SELECT
-                    p.post_id AS "id!",
-                    p.text AS "text!",
-                    p.likes AS "likes!",
-                    p.parent_id,
-                    COALESCE(r.reply_count, 0) AS reply_count
-                FROM posts p
-                LEFT JOIN (
-                    SELECT
-                        parent_id,
-                        COUNT(*) AS reply_count
-                    FROM posts
-                    GROUP BY parent_id
-                ) r ON p.post_id = r.parent_id
-                WHERE p.post_id = $1
-            ),
-            Replies AS (
-                SELECT
-                    p.post_id AS "id!",
-                    p.text AS "text!",
-                    p.likes AS "likes!",
-                    p.parent_id,
-                    COALESCE(r.reply_count, 0) AS reply_count
-                FROM posts p
-                LEFT JOIN (
-                    SELECT
-                        parent_id,
-                        COUNT(*) AS reply_count
-                    FROM posts
-                    GROUP BY parent_id
-                ) r ON p.post_id = r.parent_id
-                WHERE p.parent_id = $1
-            )
-            SELECT * FROM PostDetails
+        SELECT
+            post_id AS "id!",
+            text AS "text!",
+            likes AS "likes!",
+            parent_id,
+            (
+                SELECT COUNT(*)
+                FROM posts
+                WHERE parent_id = $1
+            ) AS reply_count
+            FROM posts
+            WHERE post_id = $1
+            AND deleted_at IS NULL
             UNION
-            SELECT * FROM Replies
+            SELECT
+                p.post_id AS "id!",
+                p.text AS "text!",
+                p.likes AS "likes!",
+                p.parent_id,
+                (
+                    SELECT COUNT(*)
+                    FROM posts r
+                    WHERE r.parent_id = p.post_id
+                    AND r.deleted_at IS NULL
+                ) AS reply_count
+            FROM posts p
+            WHERE p.parent_id = $1
+            AND p.deleted_at IS NULL
             ORDER BY "id!" ASC;
         "#,
         post_id
@@ -95,6 +88,10 @@ pub async fn fetch_post(db: DB, post_id: i32) -> Result<Option<PostWithReplies>>
     let Some(first) = posts.next() else {
         return Ok(None);
     };
+
+    if first.id != post_id {
+        return Ok(None);
+    }
 
     let replies = posts
         .map(|reply| Post {
@@ -142,6 +139,26 @@ pub async fn soft_delete_post(db: DB, post_id: i32) -> Result<()> {
     .await?;
 
     Ok(())
+}
+
+pub async fn is_post_deleted(db: DB, post_id: i32) -> Result<bool> {
+    let res = sqlx::query!(
+        r#"
+            SELECT COUNT(post_id)
+            FROM posts
+            WHERE post_id = $1
+            AND deleted_at IS NOT NULL;
+        "#,
+        post_id
+    )
+    .fetch_one(&db)
+    .await?;
+
+    let Some(count) = res.count else {
+        bail!("Error checking if post is deleted");
+    };
+
+    Ok(count > 0)
 }
 
 #[derive(Serialize, Deserialize)]
