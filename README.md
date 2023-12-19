@@ -14,10 +14,10 @@ A Twitter clone in Rust
   - [x] Text
   - [x] Likes
   - [x] Count of immediate children
-- [ ] Get one post
-  - [ ] Get immediate responses to the post
-  - [ ] Text
-  - [ ] Likes
+- [x] Get one post
+  - [x] Get immediate responses to the post
+  - [x] Text
+  - [x] Likes
 - [ ] Update post
   - [ ] Text
   - [ ] Undelete
