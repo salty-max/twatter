@@ -10,18 +10,23 @@ A Twitter clone in Rust
   - [x] Optionally can be response to response
   - [x] Posts are stored in postgres
   - [x] Posts are validated before storage in database
+  - [ ] Cannot reply to a deleted post
 - [x] Get a list of all top-level posts
   - [x] Text
   - [x] Likes
   - [x] Count of immediate children
+  - [ ] Deleted posts are ignored
 - [x] Get one post
   - [x] Get immediate responses to the post
   - [x] Text
   - [x] Likes
+  - [ ] Deleted posts respond with a 404
 - [x] Update post
   - [x] Text
-- [ ] Delete post
-  - [ ] Soft delete post
+  - [ ] Deleted posts respond with a 404
+- [x] Delete post
+  - [x] Soft delete post
+  - [ ] Deleted posts respond with a 404
 
 ## Tech
 

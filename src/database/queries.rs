@@ -129,6 +129,21 @@ pub async fn update_post_text(db: DB, post_id: i32, new_text: &str) -> Result<()
     Ok(())
 }
 
+pub async fn soft_delete_post(db: DB, post_id: i32) -> Result<()> {
+    sqlx::query!(
+        r#"
+            UPDATE posts
+            SET deleted_at = NOW()
+            WHERE post_id = $1
+        "#,
+        post_id
+    )
+    .execute(&db)
+    .await?;
+
+    Ok(())
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Post {
     id: i32,
