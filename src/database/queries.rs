@@ -1,4 +1,4 @@
-use eyre::{bail, Result};
+use eyre::Result;
 use serde::{Deserialize, Serialize};
 
 use super::connect::DB;
@@ -28,11 +28,9 @@ pub async fn fetch_top_level_posts(db: DB) -> Result<Vec<Post>> {
                 p.text,
                 p.likes,
                 (
-                    SELECT 
-                        COUNT(*) 
+                    SELECT COUNT(*) 
                     FROM posts r 
                     WHERE r.parent_id = p.post_id
-                    AND r.deleted_at IS NULL
                 ) AS reply_count 
             FROM posts p
             WHERE p.parent_id IS NULL
@@ -71,7 +69,6 @@ pub async fn fetch_post(db: DB, post_id: i32) -> Result<Option<PostWithReplies>>
                     SELECT COUNT(*)
                     FROM posts r
                     WHERE r.parent_id = p.post_id
-                    AND r.deleted_at IS NULL
                 ) AS reply_count
             FROM posts p
             WHERE p.parent_id = $1
@@ -139,26 +136,6 @@ pub async fn soft_delete_post(db: DB, post_id: i32) -> Result<()> {
     .await?;
 
     Ok(())
-}
-
-pub async fn is_post_deleted(db: DB, post_id: i32) -> Result<bool> {
-    let res = sqlx::query!(
-        r#"
-            SELECT COUNT(post_id)
-            FROM posts
-            WHERE post_id = $1
-            AND deleted_at IS NOT NULL;
-        "#,
-        post_id
-    )
-    .fetch_one(&db)
-    .await?;
-
-    let Some(count) = res.count else {
-        bail!("Error checking if post is deleted");
-    };
-
-    Ok(count > 0)
 }
 
 #[derive(Serialize, Deserialize)]
