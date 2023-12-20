@@ -20,7 +20,7 @@ A Twitter clone in Rust
   - [x] Get immediate responses to the post
   - [x] Text
   - [x] Likes
-  - [ ] Deleted posts respond with a 404
+  - [x] Deleted posts respond with a 404
 - [x] Update post
   - [x] Text
   - [ ] Deleted posts respond with a 404
@@ -29,6 +29,20 @@ A Twitter clone in Rust
   - [ ] Deleted posts respond with a 404
 
 ## Tech
+
+- rust v1.74.1
+  - with toolcahins
+    - wasm32-unknown-unknown
+
+### Client
+
+- yew v0.21.0
+  - with features
+    - csr
+- cli
+  - trunk v0.18.3
+
+### API
 
 - axum v0.7.2 
 - dotenvy v0.15.7

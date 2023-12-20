@@ -1,18 +1,2 @@
-[package]
-name = "twatter"
-version = "0.1.0"
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-axum = "0.7.2"
-dotenvy = "0.15.7"
-eyre = "0.6.11"
-serde = { version = "1.0.193", features = ["derive"] }
-serde_json = "1.0.108"
-sqlx = { version = "0.7.3", features = ["postgres", "runtime-tokio-rustls"] }
-tokio = { version = "1.35.0", features = ["net", "rt-multi-thread", "macros"] }
-tower-http = { version = "0.5.0", features = ["trace"] }
-tracing = "0.1.40"
-tracing-subscriber = "0.3.18"
+[workspace]
+members = ["api", "client"]
