@@ -9,4 +9,4 @@ dist = "../build"
 [[hooks]]
 stage = "post_build"
 command = "sh"
-command_arguments = ["-c", "npx tailwindcss -i ./styles/tailwind.css -o ../build/.stage/index.css"]
+command_arguments = ["-c", "npx tailwindcss  -c ./tailwind.config.js  -i ./styles/tailwind.css -o ../build/.stage/index.css"]

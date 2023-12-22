@@ -3,6 +3,29 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{rs,html}"],
   theme: {
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: "#6c5ce7",
+          light: "#a29bfe",
+        },
+        success: {
+          DEFAULT: "#00b894",
+          light: "#55efc4",
+        },
+        danger: {
+          DEFAULT: "#d63031",
+          light: "#ff7675",
+        },
+        warning: {
+          DEFAULT: "#fdcb6e",
+          light: "#ffeaa7",
+        },
+        light: "#efefef",
+        hint: "#dfe6e9",
+        dark: "#2d3436",
+        grey: "#636e72",
+        border: "#b2bec3",
+      },
       fontFamily: {
         Poppins: ["Poppins, sans-serif"],
       },

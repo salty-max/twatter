@@ -39,6 +39,25 @@ A Twitter clone in Rust
 - yew v0.21.0
   - with features
     - csr
+- yew-router v0.18.0
+- gloo v0.11.0
+  - with features
+    - console
+    - net
+- wasm-bindgen v0.2.89
+- wasm-bindgen-futures v0.4.39
+- web-sys v0.3.66
+  - with features
+    - Element
+    - EventTarget
+    - HtmlElement
+    - HtmlTextAreaElement
+    - Node
+- serde v1.0.193
+  - with features
+    - derive
+- dotenvy_macro v0.15.7
+- eyre v0.6.11
 - cli
   - trunk v0.18.3
 
@@ -65,6 +84,7 @@ A Twitter clone in Rust
 - tower-http v0.5.0
   - with features
     - trace
+    - cors
 - cli (use `cargo install`)
   - sqlx-cli v0.7.3
 
