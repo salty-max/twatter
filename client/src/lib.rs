@@ -11,6 +11,8 @@ mod components;
 mod helpers;
 mod router;
 mod routes;
+mod store;
+mod types;
 
 #[function_component]
 pub fn App() -> Html {

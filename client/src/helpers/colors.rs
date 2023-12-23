@@ -13,6 +13,8 @@ pub enum Color {
     Dark,
     Light,
     Hint,
+    Grey,
+    Disabled,
 }
 
 impl Color {
@@ -25,7 +27,9 @@ impl Color {
             Self::Danger => "bg-danger",
             Self::Dark => "bg-dark",
             Self::Light => "bg-light",
-            _ => "bg-light",
+            Self::Grey => "bg-grey",
+            Self::Disabled => "bg-disabled",
+            _ => "bg-inherit",
         })
     }
 
@@ -38,7 +42,8 @@ impl Color {
             Self::Danger => "hover:bg-danger-light",
             Self::Dark => "hover:bg-grey",
             Self::Light => "hover:bg-grey",
-            _ => "hover:bg-grey",
+            Self::Grey => "hover:bg-dark",
+            _ => "",
         })
     }
     pub fn text_color(&self) -> Classes {
@@ -50,7 +55,9 @@ impl Color {
             Self::Danger => "text-danger",
             Self::Dark => "text-light",
             Self::Light => "text-dark",
-            _ => "text-light",
+            Self::Grey => "text-grey",
+            Self::Disabled => "text-disabled",
+            _ => "text-inherit",
         })
     }
 }
@@ -65,7 +72,9 @@ impl Display for Color {
             Self::Danger => "danger",
             Self::Dark => "dark",
             Self::Light => "light",
+            Self::Grey => "grey",
             Self::Hint => "hint",
+            Self::Disabled => "disabled",
         };
 
         write!(f, "{color}")

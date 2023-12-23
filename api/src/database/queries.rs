@@ -35,7 +35,7 @@ pub async fn fetch_top_level_posts(db: DB) -> Result<Vec<Post>> {
             FROM posts p
             WHERE p.parent_id IS NULL
             AND p.deleted_at IS NULL
-            ORDER BY post_id;
+            ORDER BY post_id DESC;
         "#
     )
     .fetch_all(&db)

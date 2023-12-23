@@ -25,6 +25,7 @@ module.exports = {
         dark: "#2d3436",
         grey: "#636e72",
         border: "#b2bec3",
+        disabled: "#b2bec3",
       },
       fontFamily: {
         Poppins: ["Poppins, sans-serif"],

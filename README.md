@@ -1,6 +1,6 @@
 # Twatter
 
-A Twitter clone in Rust
+A cheap Twitter clone, in Rust
 
 ## Features
 
@@ -40,12 +40,15 @@ A Twitter clone in Rust
   - with features
     - csr
 - yew-router v0.18.0
+- yewdux v0.10.0
+- yew_icons v0.8.0
+  - with features
+    - lucide
 - gloo v0.11.0
   - with features
     - console
     - net
 - wasm-bindgen v0.2.89
-- wasm-bindgen-futures v0.4.39
 - web-sys v0.3.66
   - with features
     - Element

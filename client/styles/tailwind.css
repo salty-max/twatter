@@ -7,3 +7,7 @@
 html {
   font-family: "Poppins", sans-serif;
 }
+
+body {
+  background: linear-gradient(#2d3436, #6c5ce7);
+}
